@@ -1,0 +1,23 @@
+sudo: required
+services:
+- docker
+language: node_js
+node_js:
+- '8'
+before_script:
+- npm test
+script:
+- sh .travis/dockerhub/build.sh
+- sh .travis/heroku/build.sh
+after_success:
+- npm run infra
+after_script:
+- sh .travis/dockerhub/push.sh
+- sh .travis/heroku/push.sh
+env:
+  global:
+  - DOCKER_USER=iosr2017
+  - DOCKER_REPO=payments
+  - HEROKU_APP_NAME=iosr2017payments
+  - secure: NhU7tKKwgk/qxyN+XyrcU+/4uireM2XQCl61fh1CxwgHq3a008GuY04K84SONrX3wM9LNWwfkWYhyxr0uYot+DYcScVehjA0sF5ixPq80rQ7JjnhPoT2Y4LtJj899I3SpLoijWOe44lmrVBxKxb+O7cCqlF40tEPDlSUAqRBj2MQcuRNEFSJaDXzX7qCjH8qHKF5X+TPxhiWWQE9KeVIsrcpHK495/YBM08oIBhZdD7cY1aps6aIhlBjdeZEfNWkH+4DMK/3j9GnTQZL9kMs3r6kHSxAUEtF0gPoMBhlnTmntfd/Bm7tShsN9RRWrRV09rBoyRO33BtxZo21wz23VSEeG2HX/JpiqpTB8XIZLWGI1GDZ/EOHW5gz9D99AXw3KBQ44JcLg3k97/G4Vz0bHPR2v5IJjuiV10EGI3NDpFkGnUyuo369oT576AlaSOdimtybTPzhF7xifvjeXRbn/7LPLBvVeddwSSAlKenIay8ZPsddNTuERjiUeMrRMkJDmy/yRKaPlQJkap92hY4Y1VmqKmOT3Js4spGcgaInBeYxb+CshpqlORtofh/dcUshr9PR6sOVDoIDS6T7Ok9A3FVmBWLtumKc4zIsHd6eQXT4R3s+v/vGRmQwpXwCA3SjcY1OpSeF5292rPEuhf4ZGZPeCThaxuAzY0tNm1Sk0/c=
+  - secure: awJngOFFyYGg3qKcjWUqkZR5WUKE8uXIW0fv6YaqND1bdUXdN/of/4p10zEYbdAecQKolNwjweQHyKPFQyv+BWIFLz2+M/r4PcIdMHDo8qNqIktmIxBxB8fyoSyM0bMZj/ilboWiRNIVaJsFYAn4FvKpKaXruiRR+Rj9l7iHxxDlNc4+uceufokq9VckQGBiLfeGvaGue8shU+/mw9fqFKMyFdSlLT0Ug+/MX9p9IO+BqL3GJxhGsaAfTYLk5B+yzDL6JzS5r3bcyZ9gNN9xXXRykWjFFAJv8HXd32TYb+fi71YDs+pas3HtSlohuTi5JZAattYOAF5V2TAMLryP3I3YWRdqnA1MKJRSP+waqzP+CxajwvUHxDWXSBYZmd8ykFcxDDpjIrMNs/bf9BQPz/cEQgVe9A0zskndZi1gd3ZTkhI1gn14fl1jHmKHtTiR5NS0P9oqiFJbskvul+n9Z75mwkTvziQPMdfwPeMaX3T94L3f2ApRNYErbUi7z/B8PHY2rJuJHgvJwJzK2+c0Le0R/EMMvNUeLnvdqMm05RhmtIDtVjZc8Cu6AEUrK1i/89N5M5LeJO2cTTuPEcLAT5o9sZj9ItwB0dLl5uBrBifx38L+s37FBqvUEH3Iqu3I9SCABXFX6Jz9UnIBogIV6ZoFpL/+ZXG6fFIjEZ1H4PY=
