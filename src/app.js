@@ -14,7 +14,7 @@ module.exports = (mongodb) => {
     
     app.get('/test', (req, res, next) => {
         return res.status(200).json({
-            message: 'Hello from orders!'
+            message: 'Hello from payments!'
         });
     });
 
