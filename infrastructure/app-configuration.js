@@ -3,23 +3,54 @@ const {
 } = process.env;
 
 module.exports = {
-    acm: false,
-    name: HEROKU_APP_NAME,
-    region: 'eu',
-    maintenance: false,
-    stack: 'container',
-    config_vars: {
-        NODE_ENV: 'production'
+    staging: {
+        acm: false,
+        name: `${HEROKU_APP_NAME}-staging`,
+        region: 'eu',
+        maintenance: false,
+        stack: 'heroku-16',
+        config_vars: {
+            NODE_ENV: 'staging'
+        },
+        addons: {
+            librato: {
+                plan: 'librato:development'
+            },
+            logentries: {
+                plan: 'logentries:le_tryit'
+            },
+            mongolab: {
+                plan: 'mongolab:sandbox'
+            }
+        },
+        collaborators: [
+            'patryk.konior@gmail.com',
+            'stawickipiotr94@gmail.com'
+        ]
     },
-    addons: {
-        librato: {
-            plan: 'librato:development'
+    production: {
+        acm: false,
+        name: `${HEROKU_APP_NAME}-production`,
+        region: 'eu',
+        maintenance: false,
+        stack: 'heroku-16',
+        config_vars: {
+            NODE_ENV: 'production'
         },
-        logentries: {
-            plan: 'logentries:le_tryit'
+        addons: {
+            librato: {
+                plan: 'librato:development'
+            },
+            logentries: {
+                plan: 'logentries:le_tryit'
+            },
+            mongolab: {
+                plan: 'mongolab:sandbox'
+            }
         },
-        mongolab: {
-            plan: 'mongolab:sandbox'
-        }
+        collaborators: [
+            'patryk.konior@gmail.com',
+            'stawickipiotr94@gmail.com'
+        ]
     }
 };
