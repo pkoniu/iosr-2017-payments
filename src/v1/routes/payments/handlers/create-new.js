@@ -45,6 +45,9 @@ module.exports = (paymentsRepo) => {
                 return storageService.updateMany(ingredientsToUpdate)
             })
             .then(response => {
+                return ordersService.updateOne(newPaymentDetails.orderId, {status: "paid"})
+            })
+            .then(response => {
                 return paymentsRepo.createNew(newPaymentDetails)
             })
             .then(creationResult => {

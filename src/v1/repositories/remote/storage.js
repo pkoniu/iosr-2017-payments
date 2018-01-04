@@ -1,12 +1,12 @@
 const request = require('request');
 
 module.exports = () => {
-    const {MENU_SERVICE_URL = 'localhost:3003'} = process.env;
+    const {STORAGE_SERVICE_URL = 'storage-service'} = process.env;
 
     return {
         updateMany(requestPayload) {
             return new Promise((resolve, reject) => {
-                const updateStorageAmountsUrl = `http://${MENU_SERVICE_URL}/v1/storage/items`;
+                const updateStorageAmountsUrl = `http://${STORAGE_SERVICE_URL}/v1/storage/items`;
                 return request({
                         method: 'PATCH',
                         url: updateStorageAmountsUrl,
