@@ -1,7 +1,7 @@
 const request = require('request');
 
 module.exports = () => {
-    const {MENU_SERVICE_URL = 'localhost:3002'} = process.env;
+    const {MENU_SERVICE_URL = 'http://localhost:3002'} = process.env;
 
     return {
         getById(id) {

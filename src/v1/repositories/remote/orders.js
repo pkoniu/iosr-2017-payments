@@ -1,7 +1,7 @@
 const request = require('request');
 
 module.exports = () => {
-    const {ORDERS_SERVICE_URL = 'localhost:3003'} = process.env;
+    const {ORDERS_SERVICE_URL = 'http://localhost:3003'} = process.env;
 
     return {
         getById(id) {

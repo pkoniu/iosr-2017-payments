@@ -1,7 +1,7 @@
 const request = require('request');
 
 module.exports = () => {
-    const {STORAGE_SERVICE_URL = 'localhost:3005'} = process.env;
+    const {STORAGE_SERVICE_URL = 'http://localhost:3005'} = process.env;
 
     return {
         updateMany(requestPayload) {
