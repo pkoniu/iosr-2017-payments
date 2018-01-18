@@ -8,7 +8,7 @@ const {
     MONGO_PORT = '27017',
     DB_NAME = 'iosr2017-payments',
     PORT = '3004',
-    CLOUDAMQP_URL,
+    CLOUDAMQP_URL = 'amqp://grponzdp:pwcTF2Rql4tGh3SyssbVOxe2Ih6jTFJb@gopher.rmq.cloudamqp.com/grponzdp',
     AMQP_HOST = 'localhost',
     AMQP_PORT = '5672',
     AMQP_USER = 'admin',

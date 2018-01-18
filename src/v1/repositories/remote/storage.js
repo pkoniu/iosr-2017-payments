@@ -6,7 +6,7 @@ module.exports = () => {
     return {
         updateMany(requestPayload) {
             return new Promise((resolve, reject) => {
-                const updateStorageAmountsUrl = `http://${STORAGE_SERVICE_URL}/v1/storage/items`;
+                const updateStorageAmountsUrl = `${STORAGE_SERVICE_URL}/v1/storage/items`;
                 return request({
                         method: 'PATCH',
                         url: updateStorageAmountsUrl,
