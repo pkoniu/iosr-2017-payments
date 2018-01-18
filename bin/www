@@ -8,7 +8,7 @@ const {
     MONGO_PORT = '27017',
     DB_NAME = 'iosr2017-payments',
     PORT = '3004',
-    AMQP_URI,
+    CLOUDAMQP_URL,
     AMQP_HOST = 'localhost',
     AMQP_PORT = '5672',
     AMQP_USER = 'admin',
@@ -121,5 +121,5 @@ function createMongoUrl() {
 
 function createAMQPUrl() {
     const customUrl = `amqp://${AMQP_USER}:${AMQP_PASSWORD}@${AMQP_HOST}:${AMQP_PORT}/`
-    return AMQP_URI || customUrl;
+    return CLOUDAMQP_URL || customUrl;
 }
