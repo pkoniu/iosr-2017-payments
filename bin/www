@@ -7,20 +7,47 @@ const {
     MONGO_HOST = 'localhost',
     MONGO_PORT = '27017',
     DB_NAME = 'iosr2017-payments',
-    PORT = '3004'
+    PORT = '3004',
+    AMQP_URI,
+    AMQP_HOST = 'localhost',
+    AMQP_PORT = '5672',
+    AMQP_USER = 'admin',
+    AMQP_PASSWORD = 'iosr2017',
+    AMQP_QUEUE_NAME = 'orders-to-process'
 } = process.env;
 
 let server, port;
 
 const MongoClient = require('mongodb').MongoClient;
 const mongoUrl = createMongoUrl();
+var mongodb;
+
+const AMQP = require('amqplib');
+const AMQPUrl = createAMQPUrl();
+var amqpConn;
+var amqpChannel;
 
 console.log(`Connecting to: ${mongoUrl}`);
 MongoClient.connect(mongoUrl)
-    .then(mongodb => {
+    .then(mongodbConn => {
         console.log(`Connected to db.`);
-
-        const app = require('../src/app')(mongodb);
+        mongodb = mongodbConn;
+        console.log(`Connecting... to ${AMQPUrl}`);
+        return AMQP.connect(AMQPUrl);
+    })
+    .then(amqpConnRes => {
+        amqpConn = amqpConnRes;
+        console.log(`Connected to amqp. Creating channel...`);
+        return amqpConn.createChannel();
+    })
+    .then(amqpChannelRes => {
+        amqpChannel = amqpChannelRes;
+        console.log(`AMQP channel created, asserting queue...`);
+        return amqpChannel.assertQueue(AMQP_QUEUE_NAME, {durable: true});
+    })
+    .then( (reply) => {
+        console.log(`AMQP queue valid.`);
+        const app = require('../src/app')(mongodb, {channel: amqpChannel, queue: AMQP_QUEUE_NAME});
         const debug = require('debug')('iosr-2017:server');
         const http = require('http');
 
@@ -90,4 +117,9 @@ function onListening() {
 function createMongoUrl() {
     const customUrl = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${DB_NAME}`
     return MONGODB_URI || customUrl;
+}
+
+function createAMQPUrl() {
+    const customUrl = `amqp://${AMQP_USER}:${AMQP_PASSWORD}@${AMQP_HOST}:${AMQP_PORT}/`
+    return AMQP_URI || customUrl;
 }

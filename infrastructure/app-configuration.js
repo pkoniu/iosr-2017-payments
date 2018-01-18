@@ -10,7 +10,10 @@ module.exports = {
         maintenance: false,
         stack: 'heroku-16',
         config_vars: {
-            NODE_ENV: 'staging'
+            NODE_ENV: 'staging',
+            ORDERS_SERVICE_URL: 'iosr2017orders-staging.herokuapp.com',
+            MENU_SERVICE_URL: 'iosr2017menu-staging.herokuapp.com',
+            STORAGE_SERVICE_URL: 'iosr2017storage-staging.herokuapp.com'
         },
         addons: {
             librato: {
@@ -36,6 +39,9 @@ module.exports = {
         stack: 'heroku-16',
         config_vars: {
             NODE_ENV: 'production'
+            ORDERS_SERVICE_URL: 'iosr2017orders-production.herokuapp.com',
+            MENU_SERVICE_URL: 'iosr2017menu-production.herokuapp.com',
+            STORAGE_SERVICE_URL: 'iosr2017storage-production.herokuapp.com'
         },
         addons: {
             librato: {

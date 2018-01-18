@@ -5,7 +5,7 @@ const ordersService = require('./../../../repositories/remote/orders')();
 const menuService = require('./../../../repositories/remote/menu')();
 const storageService = require('./../../../repositories/remote/storage')();
 
-module.exports = (paymentsRepo) => {
+module.exports = (paymentsRepo, ordersToProcessQueue) => {
     return (req, res, next) => {
         const newPaymentDetails = _.get(req, 'body', {});
 
@@ -26,7 +26,11 @@ module.exports = (paymentsRepo) => {
                 if(_.isEmpty(order)){
                     return Promise.reject({status: 400, message: "There is no order with such id."})
                 }
-                return menuService.getById(order[0].id)
+                order = order[0]
+                if(order.status && order.status !== "unpaid"){
+                    return Promise.reject({status: 400, message: "Order with such id is not unpaid."})
+                }
+                return menuService.getById(order.id)
             })
             .then(menuItem => {
                 if(_.isEmpty(menuItem)){
@@ -48,6 +52,10 @@ module.exports = (paymentsRepo) => {
                 return ordersService.updateOne(newPaymentDetails.orderId, {status: "paid"})
             })
             .then(response => {
+                return ordersToProcessQueue.addOrderToProcess(newPaymentDetails.orderId)
+            })
+            //todo handle full queue
+            .then( isFull => {
                 return paymentsRepo.createNew(newPaymentDetails)
             })
             .then(creationResult => {
