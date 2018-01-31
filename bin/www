@@ -13,7 +13,12 @@ const {
     AMQP_PORT = '5672',
     AMQP_USER = 'admin',
     AMQP_PASSWORD = 'iosr2017',
-    AMQP_QUEUE_NAME = 'orders-to-process'
+    AMQP_QUEUE_NAME = 'orders-to-process',
+    EUREKA_APP_NAME = 'payments',
+    EUREKA_APP_HOST_NAME = 'localhost',
+    EUREKA_APP_IP_ADDR = '127.0.0.1',
+    EUREKA_APP_VIP_ADDR = 'localhost',
+    EUREKA_SERVER_URL = 'https://user:iosr2017@iosr2017eureka-develop.herokuapp.com/eureka/apps'
 } = process.env;
 
 let server, port;
@@ -26,6 +31,31 @@ const AMQP = require('amqplib');
 const AMQPUrl = createAMQPUrl();
 var amqpConn;
 var amqpChannel;
+
+const MongoClient = require('mongodb').MongoClient;
+const mongoUrl = createMongoUrl();
+
+const Eureka = require('eureka-js-client').Eureka;
+const client = new Eureka({
+      instance: {
+        app: EUREKA_APP_NAME,
+        hostName: EUREKA_APP_HOST_NAME,
+        ipAddr: EUREKA_APP_IP_ADDR,
+        port: normalizePort(PORT),
+        vipAddress: EUREKA_APP_VIP_ADDR,
+        dataCenterInfo: {
+          name: 'MyOwn'
+        },
+        statusPageUrl: EUREKA_APP_HOST_NAME,
+        healthCheckUrl: EUREKA_APP_HOST_NAME,
+        homePageUrl: EUREKA_APP_HOST_NAME,
+      },
+      eureka: {
+        serviceUrls: {
+            default: [EUREKA_SERVER_URL]
+        }
+      },
+    });
 
 console.log(`Connecting to: ${mongoUrl}`);
 MongoClient.connect(mongoUrl)
@@ -112,6 +142,7 @@ function onListening() {
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     console.log('Listening on ' + bind);
+    client.start();
 }
 
 function createMongoUrl() {
