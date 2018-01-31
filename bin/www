@@ -32,9 +32,6 @@ const AMQPUrl = createAMQPUrl();
 var amqpConn;
 var amqpChannel;
 
-const MongoClient = require('mongodb').MongoClient;
-const mongoUrl = createMongoUrl();
-
 const Eureka = require('eureka-js-client').Eureka;
 const client = new Eureka({
       instance: {
