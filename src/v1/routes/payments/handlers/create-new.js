@@ -1,11 +1,6 @@
 const _ = require('lodash');
 
-//todo: di maybe?
-const ordersService = require('./../../../repositories/remote/orders')();
-const menuService = require('./../../../repositories/remote/menu')();
-const storageService = require('./../../../repositories/remote/storage')();
-
-module.exports = (paymentsRepo, ordersToProcessQueue) => {
+module.exports = (paymentsRepo, ordersToProcessQueue, menuService, ordersService, storageService) => {
     return (req, res, next) => {
         const newPaymentDetails = _.get(req, 'body', {});
 

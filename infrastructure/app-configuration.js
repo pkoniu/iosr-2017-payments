@@ -11,9 +11,6 @@ module.exports = {
         stack: 'heroku-16',
         config_vars: {
             NODE_ENV: 'staging',
-            ORDERS_SERVICE_URL: 'http://iosr2017orders-staging.herokuapp.com',
-            MENU_SERVICE_URL: 'http://iosr2017menu-staging.herokuapp.com',
-            STORAGE_SERVICE_URL: 'http://iosr2017storage-staging.herokuapp.com',
             CLOUDAMQP_URL: 'amqp://grponzdp:pwcTF2Rql4tGh3SyssbVOxe2Ih6jTFJb@gopher.rmq.cloudamqp.com/grponzdp',
             EUREKA_APP_HOST_NAME: `${HEROKU_APP_NAME}-staging.herokuapp.com`,
             EUREKA_APP_IP_ADDR: '127.0.0.1',
@@ -44,9 +41,6 @@ module.exports = {
         stack: 'heroku-16',
         config_vars: {
             NODE_ENV: 'production',
-            ORDERS_SERVICE_URL: 'http://iosr2017orders-production.herokuapp.com',
-            MENU_SERVICE_URL: 'http://iosr2017menu-production.herokuapp.com',
-            STORAGE_SERVICE_URL: 'http://iosr2017storage-production.herokuapp.com',
             CLOUDAMQP_URL: 'amqp://grponzdp:pwcTF2Rql4tGh3SyssbVOxe2Ih6jTFJb@gopher.rmq.cloudamqp.com/grponzdp',
             EUREKA_APP_HOST_NAME: `${HEROKU_APP_NAME}-production.herokuapp.com`,
             EUREKA_APP_IP_ADDR: '127.0.0.1',

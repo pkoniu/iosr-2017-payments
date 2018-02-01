@@ -33,7 +33,7 @@ var amqpConn;
 var amqpChannel;
 
 const Eureka = require('eureka-js-client').Eureka;
-const client = new Eureka({
+const eurekaClient = new Eureka({
       instance: {
         app: EUREKA_APP_NAME,
         hostName: EUREKA_APP_HOST_NAME,
@@ -74,7 +74,7 @@ MongoClient.connect(mongoUrl)
     })
     .then( (reply) => {
         console.log(`AMQP queue valid.`);
-        const app = require('../src/app')(mongodb, {channel: amqpChannel, queue: AMQP_QUEUE_NAME});
+        const app = require('../src/app')(mongodb, {channel: amqpChannel, queue: AMQP_QUEUE_NAME}, eurekaClient);
         const debug = require('debug')('iosr-2017:server');
         const http = require('http');
 
@@ -139,7 +139,7 @@ function onListening() {
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     console.log('Listening on ' + bind);
-    client.start();
+    eurekaClient.start();
 }
 
 function createMongoUrl() {
