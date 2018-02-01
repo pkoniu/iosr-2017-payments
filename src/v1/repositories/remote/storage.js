@@ -38,16 +38,16 @@ module.exports = (eurekaClient) => {
     }
 
     return {
-        updateMany(requestPayload) {
+        updateMany(requestPayload, headers) {
             return new Promise((resolve, reject) => {
                 return askNextInstance(resolve, reject, 0, function(storageRemoteUrl) {
-                    updateStorageAmountsUrl = `http://${storageRemoteUrl}/v1/storage/items`;
                     return {
                         method: 'PATCH',
-                        url: updateStorageAmountsUrl,
+                        url: `http://${storageRemoteUrl}/v1/storage/items`,
                         json: true,
                         headers: {
-                           'Content-Type': 'application/json'
+                           'Content-Type': 'application/json',
+                            'Authorization': headers.authorization
                         },
                         body: requestPayload
                     }

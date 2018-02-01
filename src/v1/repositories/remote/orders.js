@@ -6,22 +6,22 @@ module.exports = (eurekaClient) => {
 
     const MAX_RETRY_COUNT = 3;
 
-    function askNextInstance(resolve, reject, retryCounter, requestBuilder){
+    function askNextInstance(resolve, reject, retryCounter, requestBuilder) {
         const instances = eurekaClient.getInstancesByAppId('orders');
-        if(!instances || instances.length == 0 || retryCounter === MAX_RETRY_COUNT){
+        if (!instances || instances.length == 0 || retryCounter === MAX_RETRY_COUNT) {
             ordersRemoteUrl = null;
             return reject({message: 'Orders service unavailable.'});
         }
-        if(ordersRemoteUrl === null){
+        if (ordersRemoteUrl === null) {
             ordersRemoteUrl = getOrdersUrlFromInstance(instances[0]);
         } else if (retryCounter > 0) {
-            for(i = 0 ; i < instances.length; i++){
+            for (i = 0; i < instances.length; i++) {
                 newUrl = getOrdersUrlFromInstance(instances[i]);
-                if(newUrl !== ordersRemoteUrl){
+                if (newUrl !== ordersRemoteUrl) {
                     ordersRemoteUrl = newUrl;
                     break;
                 }
-                if(i === instances.length - 1){
+                if (i === instances.length - 1) {
                     ordersRemoteUrl = null;
                     return reject({message: 'Orders service unavailable.'});
                 }
@@ -30,7 +30,7 @@ module.exports = (eurekaClient) => {
 
         const requestOptions = requestBuilder(ordersRemoteUrl);
         return request(requestOptions, (err, result) => {
-            if (err) return askNextInstance(resolve, reject, retryCounter+1, requestUrlBuilder);
+            if (err) return askNextInstance(resolve, reject, retryCounter + 1, requestUrlBuilder);
             if (result.statusCode != 200) return reject(result.body);
             try {
                 const responseBody = JSON.parse(result.body);
@@ -43,23 +43,27 @@ module.exports = (eurekaClient) => {
     }
 
     return {
-        getById(id) {
+        getById(id, headers) {
             return new Promise((resolve, reject) => {
-                return askNextInstance(resolve, reject, 0, function(ordersRemoteUrl) {
-                    return `http://${ordersRemoteUrl}/v1/orders/${id}`;
+                return askNextInstance(resolve, reject, 0, function (ordersRemoteUrl) {
+                    return {
+                        method: 'get',
+                        headers: {authorization: headers.authorization},
+                        url: `http://${ordersRemoteUrl}/v1/orders/${id}`
+                    };
                 });
             });
         },
-        updateOne(id, updatedContent) {
+        updateOne(id, updatedContent, headers) {
             return new Promise((resolve, reject) => {
-                return askNextInstance(resolve, reject, 0, function(ordersRemoteUrl) {
-                    updateOrderRequestUrl = `http://${ordersRemoteUrl}/v1/orders/${id}`;
+                return askNextInstance(resolve, reject, 0, function (ordersRemoteUrl) {
                     return {
                         method: 'PATCH',
-                        url: updateOrderRequestUrl,
+                        url: `http://${ordersRemoteUrl}/v1/orders/${id}`,
                         json: true,
                         headers: {
-                           'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': headers.authorization
                         },
                         body: updatedContent
                     }
@@ -70,10 +74,10 @@ module.exports = (eurekaClient) => {
 };
 
 function getOrdersUrlFromInstance(instance) {
-    if(!instance.hostName){
+    if (!instance.hostName) {
         return null
     }
-    if(instance.hostName === "localhost"){
+    if (instance.hostName === "localhost") {
         return instance.hostName + ":" + instance.port['$']
     }
     return instance.hostName;

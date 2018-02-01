@@ -6,22 +6,22 @@ module.exports = (eurekaClient) => {
 
     const MAX_RETRY_COUNT = 3;
 
-    function askNextInstance(resolve, reject, retryCounter, requestBuilder){
+    function askNextInstance(resolve, reject, retryCounter, requestBuilder) {
         const instances = eurekaClient.getInstancesByAppId('menu');
-        if(!instances || instances.length == 0 || retryCounter === MAX_RETRY_COUNT){
+        if (!instances || instances.length == 0 || retryCounter === MAX_RETRY_COUNT) {
             menuItemsRemoteUrl = null;
             return reject({message: 'Menu items service unavailable.'});
         }
-        if(menuItemsRemoteUrl === null){
+        if (menuItemsRemoteUrl === null) {
             menuItemsRemoteUrl = getMenuUrlFromInstance(instances[0]);
         } else if (retryCounter > 0) {
-            for(i = 0 ; i < instances.length; i++){
+            for (i = 0; i < instances.length; i++) {
                 newUrl = getMenuUrlFromInstance(instances[i]);
-                if(newUrl !== menuItemsRemoteUrl){
+                if (newUrl !== menuItemsRemoteUrl) {
                     menuItemsRemoteUrl = newUrl;
                     break;
                 }
-                if(i === instances.length - 1){
+                if (i === instances.length - 1) {
                     menuItemsRemoteUrl = null;
                     return reject({message: 'Menu items service unavailable.'});
                 }
@@ -30,7 +30,7 @@ module.exports = (eurekaClient) => {
 
         const requestOptions = requestBuilder(menuItemsRemoteUrl);
         return request(requestOptions, (err, result) => {
-            if (err) return askNextInstance(resolve, reject, retryCounter+1, requestUrlBuilder);
+            if (err) return askNextInstance(resolve, reject, retryCounter + 1, requestBuilder);
             const responseBody = JSON.parse(result.body);
             return resolve(responseBody);
         });
@@ -38,10 +38,14 @@ module.exports = (eurekaClient) => {
     }
 
     return {
-        getById(id) {
+        getById(id, headers) {
             return new Promise((resolve, reject) => {
-                return askNextInstance(resolve, reject, 0, function(menuItemsRemoteUrl) {
-                    return `http://${menuItemsRemoteUrl}/v1/menu/items/${id}`;
+                return askNextInstance(resolve, reject, 0, headers, function (menuItemsRemoteUrl) {
+                    return {
+                        method: 'get',
+                        headers: {authorization: headers.authorization},
+                        url: `http://${menuItemsRemoteUrl}/v1/menu/items/${id}`
+                    };
                 });
             });
         }
@@ -50,10 +54,10 @@ module.exports = (eurekaClient) => {
 
 
 function getMenuUrlFromInstance(instance) {
-    if(!instance.hostName){
+    if (!instance.hostName) {
         return null
     }
-    if(instance.hostName === "localhost"){
+    if (instance.hostName === "localhost") {
         return instance.hostName + ":" + instance.port['$']
     }
     return instance.hostName;

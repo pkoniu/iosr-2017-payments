@@ -16,7 +16,7 @@ module.exports = (paymentsRepo, ordersToProcessQueue, menuService, ordersService
                message: 'New payment orderId cannot be empty.'
            });
         }
-        return ordersService.getById(newPaymentDetails.orderId)
+        return ordersService.getById(newPaymentDetails.orderId, req.headers)
             .then(order => {
                 if(_.isEmpty(order)){
                     return Promise.reject({status: 400, message: "There is no order with such id."})
@@ -25,7 +25,7 @@ module.exports = (paymentsRepo, ordersToProcessQueue, menuService, ordersService
                 if(order.status && order.status !== "unpaid"){
                     return Promise.reject({status: 400, message: "Order with such id is not unpaid."})
                 }
-                return menuService.getById(order.id)
+                return menuService.getById(order.id, req.headers)
             })
             .then(menuItem => {
                 if(_.isEmpty(menuItem)){
@@ -41,13 +41,13 @@ module.exports = (paymentsRepo, ordersToProcessQueue, menuService, ordersService
                         ingredientsToUpdate.push({name: ingredient.name, amount: -ingredient.amount})
                     }
                 }
-                return storageService.updateMany(ingredientsToUpdate)
+                return storageService.updateMany(ingredientsToUpdate, req.headers)
             })
             .then(response => {
-                return ordersService.updateOne(newPaymentDetails.orderId, {status: "paid"})
+                return ordersService.updateOne(newPaymentDetails.orderId, {status: "paid"}, req.headers)
             })
             .then(response => {
-                return ordersToProcessQueue.addOrderToProcess(newPaymentDetails.orderId)
+                return ordersToProcessQueue.addOrderToProcess(newPaymentDetails.orderId, req.headers)
             })
             //todo handle full queue
             .then( isFull => {
