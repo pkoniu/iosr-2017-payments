@@ -30,7 +30,7 @@ module.exports = (eurekaClient) => {
 
         const requestOptions = requestBuilder(storageRemoteUrl);
         return request(requestOptions, (err, result) => {
-            if (err) return askNextInstance(resolve, reject, retryCounter+1, requestUrlBuilder);
+            if (err) return askNextInstance(resolve, reject, retryCounter+1, requestBuilder);
             if (result.statusCode != 200) return reject(result.body);
             return resolve(result.body);
         });

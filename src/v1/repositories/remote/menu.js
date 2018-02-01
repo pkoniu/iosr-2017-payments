@@ -40,7 +40,7 @@ module.exports = (eurekaClient) => {
     return {
         getById(id, headers) {
             return new Promise((resolve, reject) => {
-                return askNextInstance(resolve, reject, 0, headers, function (menuItemsRemoteUrl) {
+                return askNextInstance(resolve, reject, 0, function (menuItemsRemoteUrl) {
                     return {
                         method: 'get',
                         headers: {authorization: headers.authorization},
